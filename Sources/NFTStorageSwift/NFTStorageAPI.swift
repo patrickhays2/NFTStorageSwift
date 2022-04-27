@@ -5,7 +5,7 @@ public class NFTStorageAPI {
     
     private var apiKey:String
     
-    init(_ key:String) {
+    public init(_ key:String) {
         apiKey = key
     }
     
