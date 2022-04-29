@@ -41,13 +41,15 @@ public class NFTStorageAPI {
         request.allHTTPHeaderFields = ["Authorization":"Bearer \(apiKey)","Content-Type":"application/json"]
         request.httpBody = stringData.data(using: .utf8)
         let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
-            if let callData = try? JSONDecoder().decode(UploadResponse.self, from: data!) {
-                if callData.ok == true {
-                    let values = callData.value
-                    completion(true,"Data uploaded successfully.",values.cid!)
+            if data != nil {
+                if let callData = try? JSONDecoder().decode(UploadResponse.self, from: data!) {
+                    if callData.ok == true {
+                        let values = callData.value
+                        completion(true,"Data uploaded successfully.",values.cid!)
+                    }
+                } else if let errorData = try? JSONDecoder().decode(UploadFailureResponse.self, from: data!) {
+                    completion(false,"Encountered a problem:",errorData.error!.message)
                 }
-            } else if let errorData = try? JSONDecoder().decode(UploadFailureResponse.self, from: data!) {
-                completion(false,"Encountered a problem:",errorData.error!.message)
             }
             else {
                 completion(false,"Unable to process to API request.","")
